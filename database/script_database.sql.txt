@@ -1,0 +1,133 @@
+/*==============================================================*/
+/* Table: ORDERS                                                */
+/*==============================================================*/
+create table ORDERS (
+   IDORDER              SERIAL               not null,
+   DATEORDER            DATE                 null,
+   constraint PK_ORDERS primary key (IDORDER)
+);
+
+/*==============================================================*/
+/* Index: ORDER_PK                                              */
+/*==============================================================*/
+create unique index ORDER_PK on ORDERS (
+IDORDER
+);
+
+/*==============================================================*/
+/* Table: PRODUCT                                               */
+/*==============================================================*/
+create table PRODUCT (
+   IDPRODUCT            SERIAL               not null,
+   IDSTORE              INT4                 null,
+   NAME                 VARCHAR(500)         null,
+   CODE                 VARCHAR(500)         null,
+   PRICE                NUMERIC              null,
+   constraint PK_PRODUCT primary key (IDPRODUCT)
+);
+
+/*==============================================================*/
+/* Index: PRODUCT_PK                                            */
+/*==============================================================*/
+create unique index PRODUCT_PK on PRODUCT (
+IDPRODUCT
+);
+
+/*==============================================================*/
+/* Index: STORE_PRODUCT_FK                                      */
+/*==============================================================*/
+create  index STORE_PRODUCT_FK on PRODUCT (
+IDSTORE
+);
+
+/*==============================================================*/
+/* Table: PRODUCT_ORDER                                         */
+/*==============================================================*/
+create table PRODUCT_ORDER (
+   IDPRODUCTORDER       SERIAL               not null,
+   IDPRODUCT            INT4                 null,
+   IDORDER              INT4                 null,
+   constraint PK_PRODUCT_ORDER primary key (IDPRODUCTORDER)
+);
+
+/*==============================================================*/
+/* Index: PRODUCT_ORDER_PK                                      */
+/*==============================================================*/
+create unique index PRODUCT_ORDER_PK on PRODUCT_ORDER (
+IDPRODUCTORDER
+);
+
+/*==============================================================*/
+/* Index: PRODUCT_ORDER_FK                                      */
+/*==============================================================*/
+create  index PRODUCT_ORDER_FK on PRODUCT_ORDER (
+IDPRODUCT
+);
+
+/*==============================================================*/
+/* Index: ORDER_PRODUCT_FK                                      */
+/*==============================================================*/
+create  index ORDER_PRODUCT_FK on PRODUCT_ORDER (
+IDORDER
+);
+
+/*==============================================================*/
+/* Table: STOCK                                                 */
+/*==============================================================*/
+create table STOCK (
+   IDSTOCK              SERIAL               not null,
+   IDPRODUCT            INT4                 null,
+   AVAILABLE            INT4                 null,
+   SOLD                 INT4                 null,
+   constraint PK_STOCK primary key (IDSTOCK)
+);
+
+/*==============================================================*/
+/* Index: STOCK_PK                                              */
+/*==============================================================*/
+create unique index STOCK_PK on STOCK (
+IDSTOCK
+);
+
+/*==============================================================*/
+/* Index: STOCK_PRODUCT_FK                                      */
+/*==============================================================*/
+create  index STOCK_PRODUCT_FK on STOCK (
+IDPRODUCT
+);
+
+/*==============================================================*/
+/* Table: STORE                                                 */
+/*==============================================================*/
+create table STORE (
+   IDSTORE              SERIAL               not null,
+   NAME                 VARCHAR(500)         null,
+   constraint PK_STORE primary key (IDSTORE)
+);
+
+/*==============================================================*/
+/* Index: STORE_PK                                              */
+/*==============================================================*/
+create unique index STORE_PK on STORE (
+IDSTORE
+);
+
+alter table PRODUCT
+   add constraint FK_PRODUCT_STORE_PRO_STORE foreign key (IDSTORE)
+      references STORE (IDSTORE)
+      on delete restrict on update restrict;
+
+alter table PRODUCT_ORDER
+   add constraint FK_PRODUCT__PRODUCT_O_PRODUCT foreign key (IDPRODUCT)
+      references PRODUCT (IDPRODUCT)
+      on delete restrict on update restrict;
+
+alter table PRODUCT_ORDER
+   add constraint FK_PRODUCT__RELATIONS_ORDERS foreign key (IDORDER)
+      references ORDERS (IDORDER)
+      on delete restrict on update restrict;
+
+alter table STOCK
+   add constraint FK_STOCK_STOCK_PRO_PRODUCT foreign key (IDPRODUCT)
+      references PRODUCT (IDPRODUCT)
+      on delete restrict on update restrict;
